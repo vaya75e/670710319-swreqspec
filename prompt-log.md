@@ -41,6 +41,16 @@
 
 ---
 
+## 2026-09-23 09:41 คำสั่ง: /implement T-01
+
+- เครื่องมือ: Copilot in Codespaces
+- ไฟล์ที่สร้างหรือแก้: backend/app/db/models.py, backend/app/db/session.py, backend/app/db/migrations/001_init.py, backend/tests/test_db_schema.py
+- ผล test: `cd backend && pytest tests/test_db_schema.py -q` -> 1 passed in 0.47s
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี เพราะ task นี้ไม่ติด Open Question และระบุไฟล์/เงื่อนไขชัดเจนจาก spec + plan
+- ผลลัพธ์: สร้าง schema ฐานข้อมูลเริ่มต้นสำหรับ slots, bookings, audit_logs ตาม CON-TECH-01, DOM-PDPA-01 และ IF-HIS-01 โดย bookings เก็บเฉพาะ hn และไม่มี national_id
+
+---
+
 ## 2026-09-16 08:17 คำสั่ง: /plan
 
 - เครื่องมือ: Copilot in Codespaces
