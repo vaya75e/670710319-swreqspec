@@ -51,6 +51,16 @@
 
 ---
 
+## 2026-09-23 09:52 คำสั่ง: /implement T-02
+
+- เครื่องมือ: Copilot in Codespaces
+- ไฟล์ที่สร้างหรือแก้: backend/app/slots/router.py, backend/app/slots/service.py, backend/app/auth/idp.py, backend/tests/test_slots.py
+- ผล test: `cd backend && pytest tests/test_slots.py -q` -> 1 passed, 1 warning in 0.85s
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี เพราะ task นี้มี spec/plan ครอบคลุมและไม่มี Open Question ที่บล็อก
+- ผลลัพธ์: สร้าง API GET /slots ที่ตรวจยืนยันตัวตนก่อน, กรองช่วงเวลา 30 วัน และคืนข้อมูลที่นั่งคงเหลือพร้อม package_code ตาม FR-BKG-01, FR-BKG-06 และ IF-IDP-01
+
+---
+
 ## 2026-09-16 08:17 คำสั่ง: /plan
 
 - เครื่องมือ: Copilot in Codespaces
