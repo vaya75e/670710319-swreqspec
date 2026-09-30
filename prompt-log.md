@@ -61,6 +61,16 @@
 
 ---
 
+## 2026-09-30 15:20 คำสั่ง: /implement T-03
+
+- เครื่องมือ: Copilot in Codespaces
+- ไฟล์ที่สร้างหรือแก้: backend/app/booking/router.py, backend/app/booking/service.py, backend/tests/test_booking_create.py
+- ผล test: `cd backend && pytest tests/test_booking_create.py -q` -> 1 passed in 0.73s
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี เพราะ task นี้มี spec/plan ครอบคลุมและยังไม่มี Open Question ที่บล็อกงาน
+- ผลลัพธ์: สร้าง POST /bookings ที่ตรวจ identity ก่อน, บันทึก Booking, ลด remaining ของ slot ลง 1, และส่งกลับ queue_no ที่มีค่าจากระบบตาม FR-BKG-04 และ IF-IDP-01
+
+---
+
 ## 2026-09-16 08:17 คำสั่ง: /plan
 
 - เครื่องมือ: Copilot in Codespaces

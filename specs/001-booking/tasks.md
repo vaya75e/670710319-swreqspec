@@ -30,7 +30,7 @@
 - ไฟล์ที่แตะ: backend/app/booking/router.py, backend/app/booking/service.py, backend/tests/test_booking_create.py
 - ต้องทำหลัง: T-02
 - เสร็จเมื่อ: POST /bookings บันทึกการจองได้สำเร็จ ตัด remaining ของ slot ลง 1 และส่งกลับข้อมูล booking พร้อมหมายเลขคิวที่มีค่าจากระบบ
-- สถานะ: พร้อมทำ
+- สถานะ: เสร็จ รอทีมตรวจ
 
 ### T-04 ป้องกันการจองซ้ำในวันเดียวกัน
 - รองรับ: FR-BKG-02
