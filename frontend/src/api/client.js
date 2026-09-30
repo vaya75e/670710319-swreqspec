@@ -9,12 +9,17 @@ export const api = {
     const res = await fetch(`${BASE}/slots?${q}`)
     return res.json()
   },
-  async createBooking({ slotId }) {
+  async createBooking({ slotId, hn = 'HN-001' }) {
     const res = await fetch(`${BASE}/bookings`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slot_id: slotId }),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Verified-Identity': 'true',
+      },
+      body: JSON.stringify({ slot_id: slotId, hn }),
     })
-    return { status: res.status, body: await res.json() }
+
+    const body = await res.json()
+    return { status: res.status, body }
   },
 }

@@ -15,6 +15,9 @@ export default function SlotPicker({ api = defaultApi }) {
   const [packageCode, setPackageCode] = useState('STD')
   const [slots, setSlots] = useState([])
   const [loading, setLoading] = useState(false)
+  const [bookingResult, setBookingResult] = useState(null)
+  const [bookingError, setBookingError] = useState('')
+  const [bookingSlotId, setBookingSlotId] = useState(null)
 
   useEffect(() => {
     const loadSlots = async () => {
@@ -29,6 +32,25 @@ export default function SlotPicker({ api = defaultApi }) {
 
     loadSlots()
   }, [api, packageCode, today])
+
+  const handleBook = async (slot) => {
+    setBookingError('')
+    setBookingSlotId(slot.id)
+
+    const res = await api.createBooking({ slotId: slot.id, hn: 'HN-001' })
+
+    if (res.status >= 400) {
+      setBookingError(res.body?.detail ?? 'ไม่สามารถจองได้ในเวลานี้')
+      setBookingResult(null)
+    } else {
+      setBookingResult({
+        queueNo: res.body?.queue_no,
+        slotTime: formatTime(slot.start_time),
+      })
+    }
+
+    setBookingSlotId(null)
+  }
 
   return (
     <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -63,7 +85,7 @@ export default function SlotPicker({ api = defaultApi }) {
             </li>
           ) : (
             slots.map((slot) => (
-              <li key={slot.id} className="flex items-center justify-between rounded-lg border border-slate-200 p-3">
+              <li key={slot.id} className="flex items-center justify-between gap-4 rounded-lg border border-slate-200 p-3">
                 <div>
                   <div className="text-sm text-slate-500">{slot.slot_date}</div>
                   <div className="text-lg font-semibold text-slate-800">{formatTime(slot.start_time)}</div>
@@ -72,11 +94,28 @@ export default function SlotPicker({ api = defaultApi }) {
                   <div>ที่นั่งคงเหลือ: {slot.remaining}</div>
                   <div className="text-xs text-slate-500">{slot.package_code}</div>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => handleBook(slot)}
+                  disabled={bookingSlotId === slot.id}
+                  className="rounded-lg bg-teal-600 px-3 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+                >
+                  {bookingSlotId === slot.id ? 'กำลังจอง...' : `จองคิว ${formatTime(slot.start_time)}`}
+                </button>
               </li>
             ))
           )}
         </ul>
       )}
+
+      {bookingError ? <p className="mt-4 text-sm text-red-600">{bookingError}</p> : null}
+      {bookingResult ? (
+        <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-emerald-800">
+          <p className="font-semibold">จองสำเร็จ</p>
+          <p>หมายเลขคิว: {bookingResult.queueNo}</p>
+          <p>เวลา: {bookingResult.slotTime}</p>
+        </div>
+      ) : null}
     </section>
   )
 }

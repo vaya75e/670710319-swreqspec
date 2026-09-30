@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.auth.idp import is_identity_verified
-from app.booking.service import create_booking_record
+from app.booking.service import DuplicateBookingError, create_booking_record
 from app.db.session import SessionLocal
 
 
-# รองรับ: FR-BKG-04, IF-IDP-01
+# รองรับ: FR-BKG-02, FR-BKG-04, IF-IDP-01
 router = APIRouter()
 
 
@@ -38,6 +39,18 @@ def create_booking(
 
     try:
         booking = create_booking_record(db, payload.slot_id, payload.hn)
+    except DuplicateBookingError as exc:
+        existing = exc.existing_booking
+        return JSONResponse(
+            status_code=409,
+            content={
+                "detail": "คุณมีคิวที่ยังไม่ได้ใช้ในวันเดียวกันแล้ว ไม่สามารถจองซ้ำได้",
+                "queue_no": existing.queue_no,
+                "booking_id": existing.id,
+                "slot_id": existing.slot_id,
+                "hn": existing.hn,
+            },
+        )
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 
