@@ -71,9 +71,29 @@
 
 ---
 
+## 2026-09-30 15:40 คำสั่ง: /implement T-04
+
+- เครื่องมือ: Copilot in Codespaces
+- ไฟล์ที่สร้างหรือแก้: backend/app/booking/service.py, backend/tests/test_booking_duplicate.py
+- ผล test: `cd backend && pytest tests/test_booking_create.py tests/test_booking_duplicate.py -q` -> 2 passed in 0.68s
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี เพราะ task นี้มีข้อกำหนดชัดเจนจาก FR-BKG-02 และ AC-BKG-02 ว่า “มีคิวที่ยังไม่ได้ใช้ในวันเดียวกัน ต้องปฏิเสธและส่งกลับหมายเลขคิวเดิม”
+- ผลลัพธ์: เพิ่มตรวจสอบการจองซ้ำในวันเดียวกันที่ service layer เพื่อคืน booking เดิมและป้องกันการสร้างคิวใหม่สำหรับผู้รับบริการคนเดิมในวันเดียวกันตาม FR-BKG-02
+
+---
+
 ## 2026-09-16 08:17 คำสั่ง: /plan
 
 - เครื่องมือ: Copilot in Codespaces
 - ผลลัพธ์: specs/001-booking/plan.md
 - Constraint ที่ AI ยังไม่ได้ใช้: ทุก Constraint ใน spec ได้ถูกนำไปใช้ในแผนแล้ว แต่มีรายละเอียดเชิงธุรกิจบางประเด็นที่ยังต้องรอคำตอบจากทีมก่อนปิด Open Questions อย่างสมบูรณ์
 - สิ่งที่ AI บอกว่าอยากเดาแต่ไม่ได้เดา: กติกาการปฏิเสธการจองซ้ำในวันเดียวกัน, การคำนวณ 3 ตัวเลือกที่ใกล้ที่สุด, การกำหนด HN เป็นรหัสผู้รับบริการใน audit log, และเงื่อนไข retry ของข้อความแจ้งเตือน
+
+---
+
+## 2026-09-30 คำสั่ง: commit
+
+- เครื่องมือ: Copilot in Codespaces
+- ไฟล์ที่ตรวจและเตรียม commit: frontend/src/__tests__/SlotPicker.test.jsx, specs/001-booking/tasks.md, prompt-log.md
+- ผล test: `cd frontend && npm test -- src/__tests__/SlotPicker.test.jsx` -> 3 passed
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี เป็นการ commit การเปลี่ยนแปลงที่มีอยู่ใน working tree ตามคำสั่งของทีม
+- ผลลัพธ์: เพิ่ม test การจองสำเร็จและการปฏิเสธการจองซ้ำ พร้อมระบุ T-04 ว่าเสร็จรอทีมตรวจ ตาม FR-BKG-02 และ AC-BKG-02
