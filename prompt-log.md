@@ -50,6 +50,30 @@
 
 ---
 
+## 2569-10-07 คำสั่ง: /testcases AC-BKG-01 specs/001-booking/
+
+- เครื่องมือ: Copilot in Codespaces
+- โหมด: เขียน test
+- AC: AC-BKG-01 (FR-BKG-04)
+- แถวที่ใช้งาน: TC-BKG-01-1, TC-BKG-01-2, TC-BKG-01-3 โดยสถานะ "ใช้ได้"
+- TC-BKG-01-1: เพิ่ม test_TC_BKG_01_1_booking_success เพื่อตรวจบันทึก, remaining 0, และ response queue number (รอ Q-02)
+- TC-BKG-01-2: เพิ่ม TC-BKG-01-2.test.jsx เพื่อตรวจแสดงหมายเลขคิวและสถานะการจอง (รอ Q-02)
+- TC-BKG-01-3: เพิ่ม test_TC_BKG_01_3_unverified_identity_rejected เพื่อตรวจ 401 และไม่มี booking
+- ผล: รอ run test; ขณะนี้ frontend test imports missing BookingResult page และจะรายงานเป็นไม่ผ่านเพราะ task ยังไม่ทำ
+
+---
+
+## 2569-10-07 08:34 คำสั่ง: /testcases AC-BKG-01 specs/001-booking/
+
+- ผล backend: pytest -v => 6 passed, 0 failed, 1 warning โดย 0.80s
+- TC-BKG-01-1: test_TC_BKG_01_1_booking_success ผ่าน
+- TC-BKG-01-3: test_TC_BKG_01_3_unverified_identity_rejected ผ่าน
+- TC-BKG-01-2: test_TC_BKG_01_2_booking_result_display ไม่ผ่าน เพราะ frontend/src/pages/BookingResult.jsx ยังไม่มีในโฟลเดอร์ปัจจุบัน (import resolution failure)
+- การแก้ระบบ: ไม่แก้ backend/app/ หรือ frontend/src/ ไฟล์ production เพราะคำสั่งห้ามแก้โค้ดระบบ
+- การแก้ test: แก้ comments ของ test ใหม่จาก # เป็น // เพื่อให้ syntax valid แล้ว rerun; การไม่ผ่านเป็นเพราะ task T-06 ยังไม่ทำ
+
+---
+
 ## 2569-09-28 20.30 คำสั่ง: /implement T-03 specs/001-booking/tasks.md
 
 - ไฟล์ที่สร้าง: backend/app/booking/router.py, backend/app/booking/service.py, backend/app/auth/idp.py และแก้ backend/app/main.py
