@@ -81,3 +81,17 @@
 - รายงานของ AI: POST /bookings ตรวจยืนยันตัวตน (IF-IDP-01) ตัดที่นั่ง บันทึกการจอง และคืนหมายเลขคิวตาม FR-BKG-04 ถ้าช่วงเวลาเต็มตอบ 409 นอกจากนี้ได้เพิ่ม DELETE /bookings/{id} สำหรับยกเลิกการจอง เพื่อความสมบูรณ์ของระบบ
 - สิ่งที่เกือบต้องเดา: ไม่มี ทำตาม spec ครบ
 - ทีมตรวจ 5 ข้อแล้ว ผ่าน แก้สถานะเป็น "เสร็จ"
+
+---
+
+## 2569-10-07 คำสั่ง: /verify specs/001-booking/
+
+- เครื่องมือ: Copilot in Codespaces
+- โหมด: ตรวจและรายงาน
+- ผล backend: 6 passed, 0 failed, 1 warning
+- ผล frontend: 1 passed, 1 failed
+- Failed suite: src/__tests__/TC-BKG-01-2.test.jsx เพราะไม่มี frontend/src/pages/BookingResult.jsx
+- RTM: specs/001-booking/rtm.md ได้รับการสร้าง
+- ผลระ=status: 6 requirement IDs ครบ, 5 IDs ยังไม่ถึง, 3 IDs ช่องโหว่, 3 IDs ต้องคนตรวจเพิ่มเติม
+- ข้อค้นพบใหม่: FR-BKG-01, FR-BKG-02, FR-BKG-03, FR-BKG-04, FR-BKG-05, FR-BKG-06, NFR-SEC-01, NFR-REL-02, NFR-USE-01, CON-TECH-01, DOM-PDPA-01, IF-HIS-01, IF-NOT-01
+- การแก้: ไม่แก้โค้ด source/test/spec/plan/tasks; แก้เฉพาะ rtm.md และ prompt-log.md
