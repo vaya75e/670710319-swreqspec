@@ -1,37 +1,12 @@
-import { useCallback, useState } from 'react'
-
-import { api } from './api/client.js'
-import BookingResult from './pages/BookingResult.jsx'
-import ConfirmBooking from './pages/ConfirmBooking.jsx'
-import SlotPicker from './pages/SlotPicker.jsx'
-
-// รองรับ: FR-BKG-01, FR-BKG-03, FR-BKG-04, FR-BKG-06
-export default function App({ client = api }) {
-  const [selectedSlot, setSelectedSlot] = useState(null)
-  const [bookingResult, setBookingResult] = useState(null)
-
-  const handleSelectSlot = useCallback((slot) => {
-    setSelectedSlot(slot)
-    setBookingResult(null)
-  }, [])
-
+// โครงเริ่มต้นของรายวิชา: ยังไม่มีหน้าจอของ task ใด ๆ
+// หน้าจอจริงจะถูกสร้างใน src/pages/ ตาม task ใน tasks.md ทีละหน้า
+export default function App() {
   return (
-    <>
-      <SlotPicker
-        client={client}
-        selectedSlot={selectedSlot}
-        onSelectSlot={handleSelectSlot}
-      />
-      {bookingResult ? (
-        <BookingResult booking={bookingResult} />
-      ) : (
-        <ConfirmBooking
-          client={client}
-          selectedSlot={selectedSlot}
-          onSelectAlternative={handleSelectSlot}
-          onBookingSuccess={setBookingResult}
-        />
-      )}
-    </>
+    <main className="mx-auto max-w-2xl p-6">
+      <h1 className="text-2xl font-bold text-teal-800">ระบบจองคิวตรวจสุขภาพ</h1>
+      <p className="mt-2 text-slate-600">
+        โครงหน้าจอพร้อมแล้ว หน้าจอของแต่ละ task จะอยู่ในโฟลเดอร์ src/pages/
+      </p>
+    </main>
   )
 }

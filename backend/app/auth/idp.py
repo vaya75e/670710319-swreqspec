@@ -1,13 +1,15 @@
-from __future__ import annotations
+# ตรวจผลยืนยันตัวตนก่อนเข้าถึงข้อมูลผู้รับบริการ (IF-IDP-01)
+from fastapi import Header, HTTPException
 
-from typing import Any
+PREFIX = "Bearer verified:"
 
 
-# รองรับ: IF-IDP-01
+def get_verified_hn(authorization: str | None = Header(default=None)) -> str:
+    """คืน HN ของผู้ที่ยืนยันตัวตนแล้ว ถ้ายังไม่ยืนยัน ตอบ 401 (IF-IDP-01)
 
-def is_identity_verified(headers: dict[str, Any] | None = None) -> bool:
-    if not headers:
-        return False
-
-    normalized = {str(key).lower(): str(value) for key, value in headers.items()}
-    return normalized.get("x-verified-identity", "").lower() == "true"
+    ตอนนี้จำลองระบบยืนยันตัวตน: token รูปแบบ "Bearer verified:<HN>"
+    ระบบจริงต้องส่ง token ไปตรวจกับระบบยืนยันตัวตนของโรงพยาบาล
+    """
+    if not authorization or not authorization.startswith(PREFIX):
+        raise HTTPException(status_code=401, detail="ยังไม่ได้ยืนยันตัวตน")
+    return authorization[len(PREFIX):]

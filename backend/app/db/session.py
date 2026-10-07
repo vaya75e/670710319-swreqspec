@@ -1,30 +1,17 @@
-import os
-
+# สร้าง engine และ session ของฐานข้อมูล (CON-TECH-01)
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
+
+from app.config import DATABASE_URL
+
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine, autoflush=False)
 
 
-# รองรับ: CON-TECH-01
-
-def get_database_url() -> str:
-    return os.getenv("DATABASE_URL", "sqlite:///:memory:")
-
-
-def build_engine():
-    database_url = get_database_url()
-    engine_kwargs = {}
-
-    if database_url.startswith("sqlite"):
-        engine_kwargs.update(
-            {
-                "connect_args": {"check_same_thread": False},
-                "poolclass": StaticPool,
-            }
-        )
-
-    return create_engine(database_url, **engine_kwargs)
-
-
-engine = build_engine()
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+def get_db():
+    """ส่ง session ให้ API แต่ละตัว แล้วปิดเมื่อจบ"""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

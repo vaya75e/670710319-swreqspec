@@ -6,26 +6,15 @@ const BASE = import.meta.env.VITE_API_BASE ?? '/api'
 export const api = {
   async getSlots({ dateFrom, packageCode }) {
     const q = new URLSearchParams({ date_from: dateFrom, package_code: packageCode })
-    const res = await fetch(`${BASE}/slots?${q}`, {
-      headers: { 'X-Verified-Identity': 'true' },
-    })
-    const body = await res.json()
-    if (!res.ok) {
-      throw new Error(body.detail ?? 'โหลดช่วงเวลาไม่สำเร็จ')
-    }
-    return body
+    const res = await fetch(`${BASE}/slots?${q}`)
+    return res.json()
   },
-  async createBooking({ slotId, hn = 'HN-001' }) {
+  async createBooking({ slotId }) {
     const res = await fetch(`${BASE}/bookings`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Verified-Identity': 'true',
-      },
-      body: JSON.stringify({ slot_id: slotId, hn }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slot_id: slotId }),
     })
-
-    const body = await res.json()
-    return { status: res.status, body }
+    return { status: res.status, body: await res.json() }
   },
 }
