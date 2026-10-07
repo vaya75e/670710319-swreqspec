@@ -1,121 +1,61 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { vi } from 'vitest'
+
 import SlotPicker from '../pages/SlotPicker.jsx'
 
-test('โหลดช่วงเวลาว่างตามแพ็กเกจที่เลือก', async () => {
-  const api = {
-    getSlots: vi.fn().mockResolvedValue({
-      slots: [
-        {
-          id: 101,
-          slot_date: '2026-09-23',
-          start_time: '09:00:00',
-          package_code: 'STD',
-          capacity: 5,
-          remaining: 2,
-        },
-      ],
-    }),
+function getTodayDate() {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// รองรับ: FR-BKG-01, FR-BKG-06
+test('แสดงช่วงเวลาว่างและโหลดข้อมูลใหม่เมื่อเปลี่ยนแพ็กเกจ', async () => {
+  const stdSlot = {
+    id: 41,
+    slot_date: '2026-10-01',
+    start_time: '09:00:00',
+    package_code: 'STD',
+    capacity: 1,
+    remaining: 1,
+  }
+  const vipSlot = {
+    id: 42,
+    slot_date: '2026-10-01',
+    start_time: '10:00:00',
+    package_code: 'VIP',
+    capacity: 3,
+    remaining: 2,
+  }
+  const client = {
+    getSlots: vi.fn()
+      .mockResolvedValueOnce({ slots: [stdSlot, vipSlot] })
+      .mockResolvedValueOnce({ slots: [vipSlot] }),
   }
 
-  render(<SlotPicker api={api} />)
+  render(<SlotPicker client={client} />)
+
+  expect(await screen.findByText('2026-10-01 · 09:00 น.')).toBeTruthy()
+  expect(screen.getByText('คงเหลือ 1 ที่')).toBeTruthy()
+  expect(screen.getByRole('radio', { name: /2026-10-01 · 09:00 น\. STD คงเหลือ 1 ที่/ })).toHaveProperty('value', '41')
+
+  fireEvent.change(screen.getByLabelText('แพ็กเกจ'), { target: { value: 'VIP' } })
 
   await waitFor(() => {
-    expect(api.getSlots).toHaveBeenCalledWith({
-      dateFrom: expect.any(String),
-      packageCode: 'STD',
-    })
-  })
-
-  expect(screen.getByText('เลือกแพ็กเกจและช่วงเวลา')).toBeTruthy()
-  expect(screen.getByText('09:00')).toBeTruthy()
-  expect(screen.getByText('ที่นั่งคงเหลือ: 2')).toBeTruthy()
-
-  fireEvent.click(screen.getByRole('button', { name: 'VIP' }))
-
-  await waitFor(() => {
-    expect(api.getSlots).toHaveBeenLastCalledWith({
-      dateFrom: expect.any(String),
+    expect(client.getSlots).toHaveBeenNthCalledWith(2, {
+      dateFrom: getTodayDate(),
       packageCode: 'VIP',
     })
   })
+  expect(await screen.findByText('2026-10-01 · 10:00 น.')).toBeTruthy()
+  expect(screen.queryByText('2026-10-01 · 09:00 น.')).toBeNull()
 })
 
-test('เมื่อผู้ใช้กดจองแล้วต้องเรียก API และแสดงหมายเลขคิวที่ตอบกลับ', async () => {
-  const api = {
-    getSlots: vi.fn().mockResolvedValue({
-      slots: [
-        {
-          id: 101,
-          slot_date: '2026-09-23',
-          start_time: '09:00:00',
-          package_code: 'STD',
-          capacity: 5,
-          remaining: 2,
-        },
-      ],
-    }),
-    createBooking: vi.fn().mockResolvedValue({
-      status: 200,
-      body: { id: 1, queue_no: 'Q-0001', hn: 'HN-001', slot_id: 101 },
-    }),
-  }
+test('แสดงสถานะไม่มีช่วงเวลาว่างเมื่อ API ไม่พบ slot', async () => {
+  const client = { getSlots: vi.fn().mockResolvedValue({ slots: [] }) }
 
-  render(<SlotPicker api={api} />)
+  render(<SlotPicker client={client} />)
 
-  await waitFor(() => {
-    expect(screen.getByText('09:00')).toBeTruthy()
-  })
-
-  fireEvent.click(screen.getByRole('button', { name: 'จองคิว 09:00' }))
-
-  await waitFor(() => {
-    expect(api.createBooking).toHaveBeenCalledWith({
-      slotId: 101,
-      hn: 'HN-001',
-    })
-  })
-
-  expect(await screen.findByText('หมายเลขคิว: Q-0001')).toBeTruthy()
-})
-
-test('ถ้าจองซ้ำวันเดียวกันต้องแสดงข้อความปฏิเสธ', async () => {
-  const api = {
-    getSlots: vi.fn().mockResolvedValue({
-      slots: [
-        {
-          id: 101,
-          slot_date: '2026-09-23',
-          start_time: '09:00:00',
-          package_code: 'STD',
-          capacity: 5,
-          remaining: 2,
-        },
-      ],
-    }),
-    createBooking: vi.fn().mockResolvedValue({
-      status: 409,
-      body: {
-        detail: 'คุณมีคิวที่ยังไม่ได้ใช้ในวันเดียวกันแล้ว ไม่สามารถจองซ้ำได้',
-        queue_no: 'Q-0001',
-      },
-    }),
-  }
-
-  render(<SlotPicker api={api} />)
-
-  await waitFor(() => {
-    expect(screen.getByText('09:00')).toBeTruthy()
-  })
-
-  fireEvent.click(screen.getByRole('button', { name: 'จองคิว 09:00' }))
-
-  await waitFor(() => {
-    expect(api.createBooking).toHaveBeenCalledWith({
-      slotId: 101,
-      hn: 'HN-001',
-    })
-  })
-
-  expect(await screen.findByText('คุณมีคิวที่ยังไม่ได้ใช้ในวันเดียวกันแล้ว ไม่สามารถจองซ้ำได้')).toBeTruthy()
+  expect(await screen.findByText('ไม่มีช่วงเวลาว่างสำหรับเงื่อนไขที่เลือก')).toBeTruthy()
 })

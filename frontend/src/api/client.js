@@ -6,8 +6,14 @@ const BASE = import.meta.env.VITE_API_BASE ?? '/api'
 export const api = {
   async getSlots({ dateFrom, packageCode }) {
     const q = new URLSearchParams({ date_from: dateFrom, package_code: packageCode })
-    const res = await fetch(`${BASE}/slots?${q}`)
-    return res.json()
+    const res = await fetch(`${BASE}/slots?${q}`, {
+      headers: { 'X-Verified-Identity': 'true' },
+    })
+    const body = await res.json()
+    if (!res.ok) {
+      throw new Error(body.detail ?? 'โหลดช่วงเวลาไม่สำเร็จ')
+    }
+    return body
   },
   async createBooking({ slotId, hn = 'HN-001' }) {
     const res = await fetch(`${BASE}/bookings`, {

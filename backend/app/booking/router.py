@@ -6,11 +6,11 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.auth.idp import is_identity_verified
-from app.booking.service import DuplicateBookingError, create_booking_record
+from app.booking.service import DuplicateBookingError, SlotFullError, create_booking_record
 from app.db.session import SessionLocal
 
 
-# รองรับ: FR-BKG-02, FR-BKG-04, IF-IDP-01
+# รองรับ: FR-BKG-02, FR-BKG-03, FR-BKG-04, IF-IDP-01
 router = APIRouter()
 
 
@@ -39,6 +39,11 @@ def create_booking(
 
     try:
         booking = create_booking_record(db, payload.slot_id, payload.hn)
+    except SlotFullError as exc:
+        return JSONResponse(
+            status_code=409,
+            content={"detail": str(exc), "alternatives": exc.alternatives},
+        )
     except DuplicateBookingError as exc:
         existing = exc.existing_booking
         return JSONResponse(
