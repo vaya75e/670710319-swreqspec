@@ -37,6 +37,19 @@
 
 ---
 
+## 2569-10-07 คำสั่ง: /testcases AC-BKG-01 specs/001-booking/
+
+- เครื่องมือ: Copilot in Codespaces
+- โหมด: ร่าง
+- AC: AC-BKG-01 (FR-BKG-04)
+- แถวที่เสนอ: 3 แถว ทางปกติ, ขอบ, ทางผิด
+- TC-BKG-01-1: บันทึกการจอง, ตัดที่นั่งเป็น 0, คืนหมายเลขคิว (รอ Q-02)
+- TC-BKG-01-2: แสดงหมายเลขคิวและสถานะการจอง (รอ Q-02) ผ่านหน้าจอ
+- TC-BKG-01-3: ไม่ยืนยันตัวตนไม่อนุญาตการจองตาม IF-IDP-01
+- ผล: ยังไม่เขียนโค้ด test เพราะ test-cases.md ยังไม่มีแถวที่ใช้ได้; ต้องทีมตรวจแถวและเปลี่ยนสถานะเป็น "ใช้ได้" ก่อน แล้วสั่ง /testcases อีกครั้ง
+
+---
+
 ## 2569-09-28 20.30 คำสั่ง: /implement T-03 specs/001-booking/tasks.md
 
 - ไฟล์ที่สร้าง: backend/app/booking/router.py, backend/app/booking/service.py, backend/app/auth/idp.py และแก้ backend/app/main.py
